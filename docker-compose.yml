@@ -1,0 +1,25 @@
+version: "3.1"
+services:
+  php:
+    build: .docker/php
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - ${EDB_PORT:-3306}:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
+    driver: local
