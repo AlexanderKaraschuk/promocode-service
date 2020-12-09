@@ -27,8 +27,8 @@ final class ResponseFactory implements ResponseFactoryInterface
         return new Response('', 204);
     }
 
-    public function redirect($permanent = false): Response
+    public function redirect(string $to, $permanent = false): Response
     {
-        return new Response();
+        return new Response('', $permanent ? 301 : 302, ['Location' => $to]);
     }
 }

@@ -4,36 +4,42 @@ declare(strict_types=1);
 
 namespace App\Core\Router;
 
-use App\Core\Container\ContainerInterface;
 use App\Core\Request\Request;
 use App\Core\Response\Response;
+use App\Core\Router\Event\AfterHandleEvent;
+use App\Core\Router\Event\BeforeHandleEvent;
+use App\Core\Router\Event\EventDispatcher;
 use App\Core\Router\Exception\RouteNotFoundException;
-use Closure;
 
 final class Router
 {
     /** @var Route[] */
     private $routes;
 
-    private $container;
+    private $handlerResolver;
 
-    public function __construct(array $routes, ContainerInterface $container)
+    private $eventDispatcher;
+
+    public function __construct(array $routes, RouteHandlerResolverInterface $handlerResolver, EventDispatcher $eventDispatcher)
     {
         $this->routes = $routes;
-        $this->container = $container;
+        $this->handlerResolver = $handlerResolver;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function dispatch(Request $request): Response
     {
         $route = $this->match($request);
 
-        $handler = $route->handler();
+        $handler = $this->handlerResolver->resovle($route->handler());
 
-        if (!$handler instanceof Closure) {
-            $handler = $this->container->get($handler);
-        }
+        $this->eventDispatcher->dispatch(new BeforeHandleEvent($request));
 
-        return $handler($request) ?? new Response();
+        $response = $handler($request) ?? new Response();
+
+        $this->eventDispatcher->dispatch(new AfterHandleEvent($response));
+
+        return $response;
     }
 
     public function match(Request $request): Route

@@ -21,11 +21,21 @@ class Request
 
     public function method(): string
     {
-        return strtoupper($this->server->get('REQUEST_METHOD'));
+        return strtoupper($this->server->get('REQUEST_METHOD' ,''));
     }
 
     public function uri(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return $this->server->get('REQUEST_URI', '');
+    }
+
+    public function query(): ParameterBag
+    {
+        return $this->query;
+    }
+
+    public function request(): ParameterBag
+    {
+        return $this->request;
     }
 }

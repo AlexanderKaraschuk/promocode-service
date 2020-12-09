@@ -14,6 +14,7 @@
         </div>
     </nav>
     <main role="main" class="container">
+        <?php echo $flashMessages; ?>
         <?php require $templatePath; ?>
     </main>
 </body>

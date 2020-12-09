@@ -10,5 +10,5 @@ interface ResponseFactoryInterface
 
     public function empty(): Response;
 
-    public function redirect($permanent = false): Response;
+    public function redirect(string $to, $permanent = false): Response;
 }

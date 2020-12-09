@@ -21,11 +21,25 @@ class Response
 
     public function send()
     {
+        $this->sendHeaders();
         $this->sendContent();
     }
 
-    private function sendContent()
+    private function sendContent(): void
     {
         echo $this->body;
+    }
+
+    private function sendHeaders(): void
+    {
+        if (headers_sent()) {
+            return;
+        }
+
+        foreach ($this->headers as $name => $value) {
+            header($name.': '.$value, true, $this->status);
+        }
+
+        http_response_code($this->status);
     }
 }

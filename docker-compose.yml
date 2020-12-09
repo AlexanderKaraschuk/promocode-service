@@ -7,8 +7,14 @@ services:
       - .:/app
     ports:
       - "8080:8080"
-    links:
+    depends_on:
       - mysql
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PORT: ${DB_PORT}
+      DB_HOST: ${DB_HOST}
 
   mysql:
     image: mysql:5.7
@@ -19,6 +25,14 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
     volumes:
       - dbdata:/var/lib/mysql
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
+  adminer:
+    image: adminer
+    ports:
+      - 8081:8080
+    depends_on:
+      - mysql
 
 volumes:
   dbdata:
