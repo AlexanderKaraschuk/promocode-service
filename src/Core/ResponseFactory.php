@@ -22,9 +22,9 @@ final class ResponseFactory implements ResponseFactoryInterface
         return new Response($this->viewRenderer->render($template, $data), $status, $headers);
     }
 
-    public function empty(): Response
+    public function empty($status = 204): Response
     {
-        return new Response('', 204);
+        return new Response('', $status);
     }
 
     public function redirect(string $to, $permanent = false): Response

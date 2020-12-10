@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Session;
 
+use InvalidArgumentException;
+
 final class FlashBag
 {
-    const SESSION_KEY = '_flash_messages';
+    private const SESSION_KEY = '_flash_messages';
 
     const ERROR = 'error';
     const SUCCESS = 'success';
@@ -21,7 +23,7 @@ final class FlashBag
     public function add(string $type, string $message): void
     {
         if (!in_array($type, [self::ERROR, self::SUCCESS])) {
-            throw new \InvalidArgumentException('Invalid type');
+            throw new InvalidArgumentException('Invalid type');
         }
 
         $messages = $this->session->get(self::SESSION_KEY, []);

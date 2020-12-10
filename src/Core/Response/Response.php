@@ -37,7 +37,7 @@ class Response
         }
 
         foreach ($this->headers as $name => $value) {
-            header($name.': '.$value, true, $this->status);
+            header($name . ': ' . $value, true, $this->status);
         }
 
         http_response_code($this->status);

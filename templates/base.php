@@ -8,14 +8,21 @@
           integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Promocodes</a>
+<nav class="navbar navbar-dark bg-dark ">
+    <div class="container">
+        <a class="navbar-brand" href="/">Promocodes</a>
+        <div class="ml-auto">
+            <?php if ($user): ?>
+                <a href="/logout" class="btn btn-danger">Logout</a>
+            <?php else: ?>
+                <a href="/signin" class="btn btn-primary">Sign In</a>
+                <a href="/signup" class="btn btn-success">Sign Up</a>
+            <?php endif; ?>
         </div>
-    </nav>
-    <main role="main" class="container">
-        <?php echo $flashMessages; ?>
-        <?php require $templatePath; ?>
-    </main>
+</nav>
+<main role="main" class="container">
+    <?php echo $flashMessages; ?>
+    <?php require $templatePath; ?>
+</main>
 </body>
 </html>

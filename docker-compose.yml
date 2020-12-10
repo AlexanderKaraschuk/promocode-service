@@ -15,17 +15,17 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PORT: ${DB_PORT}
       DB_HOST: ${DB_HOST}
+      PARTNER_URL: ${PARTNER_URL}
 
   mysql:
     image: mysql:5.7
-    ports:
-      - ${EDB_PORT:-3306}:3306
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
     volumes:
+      - ./.docker/mysql:/docker-entrypoint-initdb.d
       - dbdata:/var/lib/mysql
-    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
 
   adminer:
     image: adminer

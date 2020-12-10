@@ -21,7 +21,7 @@ class Request
 
     public function method(): string
     {
-        return strtoupper($this->server->get('REQUEST_METHOD' ,''));
+        return strtoupper($this->server->get('REQUEST_METHOD', ''));
     }
 
     public function uri(): string

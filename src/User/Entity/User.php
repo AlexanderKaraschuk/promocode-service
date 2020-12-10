@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\User\Entity;
 
 use App\Core\Database\EntityInterface;
+use App\Core\Security\AuthUserInterface;
 
-final class User implements EntityInterface
+final class User implements EntityInterface, AuthUserInterface
 {
     private $id;
 
@@ -14,13 +15,13 @@ final class User implements EntityInterface
 
     private $password;
 
-    private function __construct(string $email, string $password)
+    public function __construct(string $email, string $password)
     {
         $this->email = $email;
         $this->password = $password;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -44,6 +45,6 @@ final class User implements EntityInterface
 
     public static function fromState(array $state): EntityInterface
     {
-        return (new self($state['email'], $state['password']))->setId($state['id']);
+        return (new self($state['email'], $state['password']))->setId((int)$state['id']);
     }
 }

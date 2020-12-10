@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\View;
 
+use App\Core\Security\Security;
 use App\Core\Session\FlashBag;
 
 class PhpRenderer implements RendererInterface
@@ -12,16 +13,20 @@ class PhpRenderer implements RendererInterface
 
     private $flashBag;
 
-    public function __construct(string $basePath, FlashBag $flashBag)
+    private $security;
+
+    public function __construct(string $basePath, FlashBag $flashBag, Security $security)
     {
         $this->basePath = $basePath;
         $this->flashBag = $flashBag;
+        $this->security = $security;
     }
 
     public function render(string $template, array $data = []): string
     {
         $templatePath = $this->basePath . $template . '.php';
         $flashMessages = $this->getFlashMessages();
+        $user = $this->security->currentUser();
 
         ob_start();
         extract($data);

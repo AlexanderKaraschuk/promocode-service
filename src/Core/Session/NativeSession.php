@@ -20,7 +20,7 @@ class NativeSession implements SessionInterface
 
     public function has(string $key): bool
     {
-        return array_key_exists($key, $_SESSION);
+        return array_key_exists($key, $_SESSION ?? []);
     }
 
     public function start(): void
@@ -36,7 +36,7 @@ class NativeSession implements SessionInterface
 
     public function remove(string $key): void
     {
-        if ($this->has($key)) {
+        if ($this->has($key) && $_SESSION !== null) {
             unset($_SESSION[$key]);
         }
     }

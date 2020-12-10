@@ -3,7 +3,7 @@
     <form action="/signup" method="post">
         <div class="form-group">
             <label for="email">Email address</label>
-            <input type="email"  id="email" class="form-control" name="email" placeholder="Enter email" required>
+            <input type="email" id="email" class="form-control" name="email" placeholder="Enter email" required>
         </div>
         <div class="form-group">
             <label for="password">Password</label>

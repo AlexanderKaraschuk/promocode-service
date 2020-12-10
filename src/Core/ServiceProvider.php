@@ -6,13 +6,15 @@ namespace App\Core;
 
 use App\Core\Container\ContainerInterface;
 use App\Core\Container\ServiceProviderInterface;
+use App\Core\Database\DatabaseAdapterInterface;
+use App\Core\Database\MysqlDatabaseAdapter;
 use App\Core\Response\ResponseFactoryInterface;
 use App\Core\Router\ContainerRouteHandlerResolver;
-use App\Core\Router\Event\BeforeHandleEvent;
-use App\Core\Router\Event\EventDispatcher;
-use App\Core\Router\EventListener\StartSessionListener;
 use App\Core\Router\RouteHandlerResolverInterface;
 use App\Core\Router\Router;
+use App\Core\Security\Password\NativePasswordEncoder;
+use App\Core\Security\Password\PasswordEncoder;
+use App\Core\Security\Security;
 use App\Core\Session\FlashBag;
 use App\Core\Session\NativeSession;
 use App\Core\Session\SessionInterface;
@@ -43,7 +45,6 @@ final class ServiceProvider implements ServiceProviderInterface
         });
 
         $container->set(SessionInterface::class, NativeSession::class);
-        $container->set(StartSessionListener::class);
 
         $container->set(FlashBag::class);
 
@@ -51,26 +52,25 @@ final class ServiceProvider implements ServiceProviderInterface
             return new ContainerRouteHandlerResolver($container);
         });
 
-        $container->set(EventDispatcher::class, function (ContainerInterface $container) {
-            $eventDispatcher = new EventDispatcher();
-            $eventDispatcher->addListener(BeforeHandleEvent::NAME, $container->get(StartSessionListener::class));
-
-            return $eventDispatcher;
-        });
-
         $container->set(Router::class, function (ContainerInterface $container) {
             $routes = require_once __DIR__ . '/../../config/routes.php';
             return new Router(
                 $routes,
-                $container->get(RouteHandlerResolverInterface::class),
-                $container->get(EventDispatcher::class)
+                $container->get(RouteHandlerResolverInterface::class)
             );
         });
 
         $container->set(ResponseFactoryInterface::class, ResponseFactory::class);
         $container->set(RendererInterface::class, function (ContainerInterface $container) {
-            return new PhpRenderer(__DIR__ . '/../../templates/', $container->get(FlashBag::class));
+            return new PhpRenderer(
+                __DIR__ . '/../../templates/',
+                $container->get(FlashBag::class),
+                $container->get(Security::class)
+            );
         });
 
+        $container->set(PasswordEncoder::class, NativePasswordEncoder::class);
+        $container->set(DatabaseAdapterInterface::class, MysqlDatabaseAdapter::class);
+        $container->set(Security::class);
     }
 }

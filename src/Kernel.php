@@ -7,7 +7,10 @@ namespace App;
 use App\Core\Container\ContainerInterface;
 use App\Core\Request\Request;
 use App\Core\Response\Response;
+use App\Core\Response\ResponseFactoryInterface;
+use App\Core\Router\Exception\RouteNotFoundException;
 use App\Core\Router\Router;
+use App\Core\Session\SessionInterface;
 
 final class Kernel
 {
@@ -21,7 +24,14 @@ final class Kernel
     public function handle(Request $request)
     {
         $this->bootContainer();
-        $response = $this->runRouter($request);
+        $this->boot();
+        $responseFactory = $this->container->get(ResponseFactoryInterface::class);
+
+        try {
+            $response = $this->runRouter($request);
+        } catch (RouteNotFoundException $exception) {
+            $response = $responseFactory->view('404', [], 404);
+        }
 
         $response->send();
     }
@@ -33,6 +43,12 @@ final class Kernel
         foreach ($serviceProviders as $provider) {
             (new $provider())->register($this->container);
         }
+    }
+
+    private function boot()
+    {
+        $session = $this->container->get(SessionInterface::class);
+        $session->start();
     }
 
     private function runRouter(Request $request): Response
